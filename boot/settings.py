@@ -28,8 +28,11 @@ DATABASES = {
 }
 
 # Load the secrets file
-with open(BASE_PATH.parent.child('secrets.json')) as handle:
-    SECRETS = json.load(handle)
+try:
+    with open(BASE_PATH.parent.child('secrets.json')) as handle:
+        SECRETS = json.load(handle)
+except IOError:
+    SECRETS = {}
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
@@ -93,7 +96,7 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = SECRETS.get('secret_key')
+SECRET_KEY = SECRETS.get('secret_key', '!')
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
