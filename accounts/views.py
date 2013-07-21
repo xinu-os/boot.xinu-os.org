@@ -1,6 +1,5 @@
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
-from django.shortcuts import render
 from django.views.generic import DetailView, RedirectView
 
 from accounts.models import Profile
@@ -12,7 +11,6 @@ class AccountsRedirectView(RedirectView):
 
     def get_redirect_url(self, **kwargs):
         pk = self.request.user.pk
-        print 'redirecting to ', pk
         if pk is None:
             return reverse('accounts:login')
         else:

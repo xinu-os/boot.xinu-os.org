@@ -107,6 +107,7 @@ TEMPLATE_LOADERS = (
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
+    'tracking.middleware.VisitorTrackingMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -141,8 +142,9 @@ INSTALLED_APPS = (
 
     'south',
     'social_auth',
+    'tracking',
 
-    'accounts'
+    'accounts',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS += (
@@ -183,6 +185,11 @@ SOCIAL_AUTH_ASSOCIATE_URL_NAME = 'accounts:socialauth_associate_complete'
 # Backend Identifications
 GITHUB_APP_ID = SECRETS.get('github_app_id')
 GITHUB_API_SECRET = SECRETS.get('github_api_secret')
+
+# django-tracking2 settings
+TRACK_AJAX_REQUESTS = True
+TRACK_ANONYMOUS_USERS = True
+TRACK_PAGEVIEWS = True
 
 # Test settings
 TEST_RUNNER = 'discover_runner.DiscoverRunner'

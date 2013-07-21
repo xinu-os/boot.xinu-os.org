@@ -9,3 +9,4 @@ coverage==3.6
 django-discover-runner==1.0
 selenium==2.33.0
 mock==1.0.1
+django-tracking2==0.1.4
