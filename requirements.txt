@@ -4,3 +4,6 @@ django-social-auth==0.7.24
 oauth2==1.5.211
 python-openid==2.2.5
 simplejson==3.3.0
+Unipath==1.0
+coverage==3.6
+django-discover-runner==1.0

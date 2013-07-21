@@ -1,7 +1,13 @@
 # Django settings for boot project.
+from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS
+from django.utils import simplejson as json
+from unipath import Path
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
+
+# Get the base path of the projects
+BASE_PATH = Path(__file__).absolute().ancestor(2)
 
 ADMINS = (
     ('Team Xinu', 'xinu@xinu-os.org'),
@@ -20,6 +26,10 @@ DATABASES = {
         'PORT': '',
     }
 }
+
+# Load the secrets file
+with open(BASE_PATH.parent.child('secrets.json')) as handle:
+    SECRETS = json.load(handle)
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
@@ -83,7 +93,7 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = 'xum7v#a#sh1v&=jp(^gw^)-@716r-bux7c4^ch)04#i5faztgz'
+SECRET_KEY = SECRETS.get('secret_key')
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -111,6 +121,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+    BASE_PATH.child('boot').child('templates'),
 )
 
 INSTALLED_APPS = (
@@ -121,10 +132,57 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # Uncomment the next line to enable the admin:
-    # 'django.contrib.admin',
+    'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+
+    'south',
+    'social_auth',
+
+    'accounts'
 )
+
+TEMPLATE_CONTEXT_PROCESSORS += (
+    'social_auth.context_processors.social_auth_by_name_backends',
+    'social_auth.context_processors.social_auth_backends',
+    'social_auth.context_processors.social_auth_by_type_backends',
+    'social_auth.context_processors.social_auth_login_redirect',
+)
+
+AUTHENTICATION_BACKENDS = (
+    #'social_auth.backends.twitter.TwitterBackend',
+    #'social_auth.backends.facebook.FacebookBackend',
+    #'social_auth.backends.google.GoogleOAuthBackend',
+    #'social_auth.backends.google.GoogleOAuth2Backend',
+    #'social_auth.backends.google.GoogleBackend',
+    #'social_auth.backends.yahoo.YahooBackend',
+    #'social_auth.backends.browserid.BrowserIDBackend',
+    #'social_auth.backends.contrib.linkedin.LinkedinBackend',
+    #'social_auth.backends.contrib.disqus.DisqusBackend',
+    #'social_auth.backends.contrib.livejournal.LiveJournalBackend',
+    #'social_auth.backends.contrib.orkut.OrkutBackend',
+    #'social_auth.backends.contrib.foursquare.FoursquareBackend',
+    'social_auth.backends.contrib.github.GithubBackend',
+    #'social_auth.backends.contrib.vk.VKOAuth2Backend',
+    #'social_auth.backends.contrib.live.LiveBackend',
+    #'social_auth.backends.contrib.skyrock.SkyrockBackend',
+    #'social_auth.backends.contrib.yahoo.YahooOAuthBackend',
+    #'social_auth.backends.contrib.readability.ReadabilityBackend',
+    #'social_auth.backends.contrib.fedora.FedoraBackend',
+    #'social_auth.backends.OpenIDBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+# Other Social Auth config
+SOCIAL_AUTH_COMPLETE_URL_NAME = 'accounts:socialauth_complete'
+SOCIAL_AUTH_ASSOCIATE_URL_NAME = 'accounts:socialauth_associate_complete'
+
+# Backend Identifications
+GITHUB_APP_ID = SECRETS.get('github_app_id')
+GITHUB_API_SECRET = SECRETS.get('github_api_secret')
+
+# Test settings
+TEST_RUNNER = 'discover_runner.DiscoverRunner'
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

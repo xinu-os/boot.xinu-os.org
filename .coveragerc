@@ -1,0 +1,12 @@
+# .coveragerc to control coverage.py
+[run]
+branch = True
+source = .
+
+[report]
+omit =
+    manage.py
+    */wsgi.py
+    setup.py
+    settings.py
+    */migrations/*

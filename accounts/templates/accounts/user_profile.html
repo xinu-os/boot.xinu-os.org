@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load url from future %}
+
+{% block content %}
+You are: {{ user }}, <a href="{% url 'accounts:logout' %}">logout</a>
+
+<hr/>
+
+Viewing: {{ object }}
+
+<hr/>
+
+{% if form %}
+<form method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" name="submit" value="Submit" />
+</form>
+{% endif %}
+
+{% endblock %}

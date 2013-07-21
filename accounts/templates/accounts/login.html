@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load url from future %}
+
+{% block content %}
+{% if form.errors %}
+<p class="error">
+    Your username and password did not match. Please try again.
+</p>
+{% endif %}
+<p>
+    Login via
+    <a href="{% url "accounts:socialauth_begin" "github" %}">GitHub</a>
+    or
+    <a href="">create an account</a>.
+</p>
+<form method="post" action="{% url 'accounts:login' %}">
+    {% csrf_token %}
+    <table>
+        <tr>
+            <td>{{ form.username.label_tag }}</td>
+            <td>{{ form.username }}</td>
+        </tr>
+        <tr>
+            <td>{{ form.password.label_tag }}</td>
+            <td>{{ form.password }}</td>
+        </tr>
+    </table>
+
+    <input type="submit" value="login" />
+    <input type="hidden" name="next" value="{{ next }}" />
+</form>
+{% endblock %}
