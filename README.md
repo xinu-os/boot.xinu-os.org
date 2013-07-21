@@ -3,7 +3,8 @@ boot.xinu-os.org
 
 This is the web app that supports booting Xinu kernels in the browser.
 
-[![Build Status](https://travis-ci.org/xinu-os/boot.xinu-os.org.png)](https://travis-ci.org/xinu-os/boot.xinu-os.org.png) 
+[![Build Status](https://travis-ci.org/xinu-os/boot.xinu-os.org.png?branch=master)](https://travis-ci.org/xinu-os/boot.xinu-os.org/)
+[![Coverage](https://coveralls.io/repos/xinu-os/boot.xinu-os.org/badge.png?branch=master)](https://coveralls.io/repos/xinu-os/boot.xinu-os.org/)
 
 ## License(s)
 
