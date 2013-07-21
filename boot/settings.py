@@ -145,6 +145,7 @@ INSTALLED_APPS = (
     'tracking',
 
     'accounts',
+    'kernels',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS += (
