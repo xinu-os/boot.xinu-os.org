@@ -7,3 +7,5 @@ simplejson==3.3.0
 Unipath==1.0
 coverage==3.6
 django-discover-runner==1.0
+selenium==2.33.0
+mock==1.0.1
