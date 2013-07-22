@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from social_auth.tests.client import SocialClient
 
 
-class AccountsTest(TestCase):
+class AccountsLoginTest(TestCase):
     def setUp(self):
         self.username = 'example'
         self.email = 'example@example.org'
