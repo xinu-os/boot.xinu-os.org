@@ -159,7 +159,7 @@ AUTHENTICATION_BACKENDS = (
     #'social_auth.backends.twitter.TwitterBackend',
     #'social_auth.backends.facebook.FacebookBackend',
     #'social_auth.backends.google.GoogleOAuthBackend',
-    #'social_auth.backends.google.GoogleOAuth2Backend',
+    'social_auth.backends.google.GoogleOAuth2Backend',
     #'social_auth.backends.google.GoogleBackend',
     #'social_auth.backends.yahoo.YahooBackend',
     #'social_auth.backends.browserid.BrowserIDBackend',
@@ -186,6 +186,8 @@ SOCIAL_AUTH_ASSOCIATE_URL_NAME = 'accounts:socialauth_associate_complete'
 # Backend Identifications
 GITHUB_APP_ID = SECRETS.get('github_app_id')
 GITHUB_API_SECRET = SECRETS.get('github_api_secret')
+GOOGLE_OAUTH2_CLIENT_ID = SECRETS.get('google_oauth2_client_id')
+GOOGLE_OAUTH2_CLIENT_SECRET = SECRETS.get('google_oauth2_client_secret')
 
 # django-tracking2 settings
 TRACK_AJAX_REQUESTS = True
