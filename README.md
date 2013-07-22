@@ -11,7 +11,7 @@ This is the web app that supports booting Xinu kernels in the browser.
 The [`kernels/static/kernels/jslinux/`][jslinux] directory contains the
 virtual environment developed by [Fabrice Bellard](http://bellard.org/). It
 is reproduced here with his explicit permission. See the
-[README][jslinux-readmin] in that directory for more details.
+[README][jslinux-readme] in that directory for more details.
 
 All other directories are under the license found in the `LICENSE` file.
 
