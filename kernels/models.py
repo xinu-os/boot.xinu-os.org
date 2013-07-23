@@ -13,8 +13,8 @@ class Kernel(models.Model):
         (2, _('Private')),
     )
 
+    checksum = models.CharField(max_length=40, primary_key=True)
     owner = models.ForeignKey(User)
     timestamp = models.DateTimeField(auto_now=True)
-    checksum = models.CharField(max_length=64)
     image = models.FileField(upload_to=IMAGE_PATH)
     access_level = models.SmallIntegerField(choices=ACCESS_LEVELS, default=0)

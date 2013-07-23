@@ -10,11 +10,11 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         # Adding model 'Kernel'
         db.create_table(u'kernels_kernel', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('checksum', self.gf('django.db.models.fields.CharField')(max_length=40, primary_key=True)),
             ('owner', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
             ('timestamp', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
-            ('checksum', self.gf('django.db.models.fields.CharField')(max_length=64)),
             ('image', self.gf('django.db.models.fields.files.FileField')(max_length=100)),
+            ('access_level', self.gf('django.db.models.fields.SmallIntegerField')(default=0)),
         ))
         db.send_create_signal(u'kernels', ['Kernel'])
 
@@ -63,8 +63,8 @@ class Migration(SchemaMigration):
         },
         u'kernels.kernel': {
             'Meta': {'object_name': 'Kernel'},
-            'checksum': ('django.db.models.fields.CharField', [], {'max_length': '64'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'access_level': ('django.db.models.fields.SmallIntegerField', [], {'default': '0'}),
+            'checksum': ('django.db.models.fields.CharField', [], {'max_length': '40', 'primary_key': 'True'}),
             'image': ('django.db.models.fields.files.FileField', [], {'max_length': '100'}),
             'owner': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"}),
             'timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'})

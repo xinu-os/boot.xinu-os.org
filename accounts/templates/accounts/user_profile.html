@@ -10,6 +10,14 @@ Viewing: {{ object }}
 
 <hr/>
 
+Profile: {{ object.profile }}
+
+<hr/>
+
+<a href="{% url "kernels:upload" %}">Upload a kernel</a>
+
+<hr/>
+
 {% if form %}
 <form method="post">
     {% csrf_token %}

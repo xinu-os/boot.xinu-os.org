@@ -11,8 +11,13 @@
     Login via
     <a href="{% url "accounts:socialauth_begin" "github" %}">GitHub</a>
     or
+    <a href="{% url "accounts:socialauth_begin" "google-oauth1" %}">Google</a>
+    <!--
+    or
     <a href="">create an account</a>.
+    -->
 </p>
+<!--
 <form method="post" action="{% url 'accounts:login' %}">
     {% csrf_token %}
     <table>
@@ -29,4 +34,5 @@
     <input type="submit" value="login" />
     <input type="hidden" name="next" value="{{ next }}" />
 </form>
+-->
 {% endblock %}
