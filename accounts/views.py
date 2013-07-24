@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.views.generic import DetailView, RedirectView
 from django.views.generic.edit import ProcessFormView, FormMixin
 
+from boot.lib.views import ProtectedMixin
 from accounts.models import Profile
 from accounts.forms import ProfileForm
 
@@ -35,13 +36,10 @@ class AccountsProfileView(DetailView, ProcessFormView, FormMixin):
             form = form_class(instance=profile)
         return form
 
-    def is_my_account(self):
-        return self.request.user.pk == int(self.kwargs['pk'])
-
     def get_context_data(self, **kwargs):
         context = super(AccountsProfileView, self).get_context_data(**kwargs)
         # Only add form context if your own account
-        if self.is_my_account():
+        if ProtectedMixin.is_my_account(self):
             context['form'] = self.get_form()
         return context
 
@@ -51,7 +49,7 @@ class AccountsProfileView(DetailView, ProcessFormView, FormMixin):
 
     def post(self, request, *args, **kwargs):
         # Cannot modify other accounts
-        if not self.is_my_account():
+        if not ProtectedMixin.is_my_account(self):
             return redirect('accounts:profile')
         form = self.get_form()
         if form.is_valid():

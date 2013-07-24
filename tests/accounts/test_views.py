@@ -63,24 +63,6 @@ class AccountsProfileTest(TestCase):
         social_user = UserSocialAuth.objects.all()[0]
         return social_user.user
 
-    def test_is_my_account(self):
-        user = self._login_user()
-        apv = AccountsProfileView()
-        apv.kwargs = {'pk': user.pk}
-        apv.request = self.factory.get(reverse('accounts:user-profile',
-                                               kwargs=apv.kwargs))
-        apv.request.user = user
-        self.assertTrue(apv.is_my_account())
-
-    def test_is_not_my_account(self):
-        user = self._login_user()
-        apv = AccountsProfileView()
-        apv.kwargs = {'pk': user.pk+1}
-        apv.request = self.factory.get(reverse('accounts:user-profile',
-                                               kwargs=apv.kwargs))
-        apv.request.user = user
-        self.assertFalse(apv.is_my_account())
-
     def test_get_form_with_post(self):
         web_site = 'http://localhost/'
         user = self._login_social_user()
