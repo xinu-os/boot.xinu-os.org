@@ -18,12 +18,3 @@ class KernelUploadFormTest(TestCase):
         kernels = Kernel.objects.all()
         # since we did not commit, it should not be in db
         self.assertEqual(kernels.count(), 0)
-
-    def test_kernel_upload_form_save(self):
-        kuf = KernelUploadForm(owner=self.user)
-        obj = kuf.save(commit=True)
-        kernels = Kernel.objects.all()
-        # we committed, so object should exist
-        self.assertEqual(kernels.count(), 1)
-        kernel = kernels.get()
-        self.assertEqual(kernel, obj)
