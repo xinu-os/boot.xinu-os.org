@@ -18,3 +18,7 @@ class Kernel(models.Model):
     timestamp = models.DateTimeField(auto_now=True)
     image = models.FileField(upload_to=IMAGE_PATH)
     access_level = models.SmallIntegerField(choices=ACCESS_LEVELS, default=0)
+
+    def save(self, *args, **kwargs):
+        self.checksum = '0'*40
+        super(Kernel, self).save(*args, **kwargs)

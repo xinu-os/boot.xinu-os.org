@@ -6,7 +6,6 @@ source = .
 [report]
 omit =
     manage.py
-    */wsgi.py
-    setup.py
-    settings.py
+    boot/*settings.py
+    boot/wsgi.py
     */migrations/*
