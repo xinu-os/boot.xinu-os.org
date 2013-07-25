@@ -1,0 +1,10 @@
+{% load url from future %}
+<ul>
+{% for kernel in kernels %}
+<li>
+    <a href="{% url "kernels:view" pk=kernel.pk %}">
+        {{ kernel.get_access_level_display }} Kernel {{ kernel.pk }}
+    </a>
+</li>
+{% endfor %}
+</ul>

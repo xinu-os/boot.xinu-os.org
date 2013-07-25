@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load url from future %}
+{% load kernel_tags %}
 
 {% block content %}
 You are: {{ user }}, <a href="{% url 'accounts:logout' %}">logout</a>
@@ -15,6 +16,8 @@ Profile: {{ object.profile }}
 <hr/>
 
 <a href="{% url "kernels:upload" %}">Upload a kernel</a>
+
+{% user_kernels user %}
 
 <hr/>
 

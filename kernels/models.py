@@ -15,10 +15,13 @@ class Kernel(models.Model):
     # Location to store kernel images
     IMAGE_PATH = 'kernels'
     # Access levels for kernel
+    ACCESS_PUBLIC = 0
+    ACCESS_LINK = 1
+    ACCESS_PRIVATE = 2
     ACCESS_LEVELS = (
-        (0, _('Public')),
-        (1, _('Link only')),
-        (2, _('Private')),
+        (ACCESS_PUBLIC, _('Public')),
+        (ACCESS_LINK, _('Link only')),
+        (ACCESS_PRIVATE, _('Private')),
     )
 
     checksum = models.CharField(max_length=40, primary_key=True)
@@ -30,3 +33,8 @@ class Kernel(models.Model):
     def save(self, *args, **kwargs):
         self.checksum = sha1(self.image.read()).hexdigest()
         return super(Kernel, self).save(*args, **kwargs)
+
+    def __unicode__(self):
+        return 'Kernel({0}, {1}, {2})'.format(self.owner,
+                                              self.access_level,
+                                              self.checksum)
