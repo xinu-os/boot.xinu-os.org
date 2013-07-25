@@ -3,10 +3,11 @@ logging.disable(logging.WARNING)
 
 import httplib
 
-from django.test import TestCase
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.core.files.base import ContentFile
 from django.core.urlresolvers import reverse
+from django.test import TestCase
 from unipath import Path
 
 from kernels.models import Kernel
@@ -77,3 +78,65 @@ class KernelsUploadTest(TestCase):
         self.assertEqual(self.kernels.count(), 0)
         # user doesn't match owner, forbidden
         self.assertEqual(response.status_code, httplib.FORBIDDEN)
+
+
+class KernelsDetailViewTest(TestCase):
+
+    def setUp(self):
+        # two users, user 1 has 3 images
+        self.pass1 = 'z'
+        self.user1 = User.objects.create_user('a', 'a@example.com', self.pass1)
+        self.user2 = User.objects.create_user('b', 'b@example.com', 'y')
+        # images
+        self.kernel0 = self._create_kernel(Kernel.ACCESS_PUBLIC)
+        self.kernel1 = self._create_kernel(Kernel.ACCESS_LINK)
+        self.kernel2 = self._create_kernel(Kernel.ACCESS_PRIVATE)
+
+    def _create_kernel(self, access_level):
+        f = ContentFile(Kernel.ACCESS_LEVELS[access_level][1])
+        f.name = 'access_file'
+        kernel = Kernel.objects.create(owner=self.user1,
+                                       image=f,
+                                       access_level=access_level)
+        return kernel
+
+    def _get_detail_url(self, pk):
+        return reverse('kernels:view', kwargs={'pk': pk})
+
+    def _get_image_url(self, pk):
+        return reverse('kernels:image', kwargs={'pk': pk})
+
+    def _assertViewable(self, kernel):
+        # KernelsDetailView
+        url = self._get_detail_url(kernel.pk)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'kernels/view.html')
+        # KernelsImageView
+        url = self._get_image_url(kernel.pk)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, kernel.image.read())
+
+    def _assertNonViewable(self, url):
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 403)
+
+    def test_public_view(self):
+        # A public kernel can be viewed globally
+        self._assertViewable(self.kernel0)
+
+    def test_link_only_view(self):
+        # A link-only kernel can be viewed globally
+        self._assertViewable(self.kernel1)
+
+    def test_private_view_owner(self):
+        # A private kernel can only be viewed by owner
+        login = self.client.login(username=self.user1.username,
+                                  password=self.pass1)
+        self.assertTrue(login)
+        self._assertViewable(self.kernel2)
+
+    def test_private_view_non_owner(self):
+        self._assertNonViewable(self._get_detail_url(self.kernel2.pk))
+        self._assertNonViewable(self._get_image_url(self.kernel2.pk))

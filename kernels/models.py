@@ -7,8 +7,10 @@ from django.utils.translation import ugettext as _
 
 
 def get_image_path(instance, filename):
+    # Place image in sub-dir based on first 2 chars of checksum
+    ck = instance.checksum[0:2]
     target = '{0}.bin'.format(instance.checksum)
-    return Path(Kernel.IMAGE_PATH).child(target)
+    return Path(Kernel.IMAGE_PATH).child(ck).child(target)
 
 
 class Kernel(models.Model):
@@ -31,7 +33,9 @@ class Kernel(models.Model):
     access_level = models.SmallIntegerField(choices=ACCESS_LEVELS, default=0)
 
     def save(self, *args, **kwargs):
-        self.checksum = sha1(self.image.read()).hexdigest()
+        checksum = sha1(self.owner.username)
+        checksum.update(self.image.read())
+        self.checksum = checksum.hexdigest()
         return super(Kernel, self).save(*args, **kwargs)
 
     def __unicode__(self):

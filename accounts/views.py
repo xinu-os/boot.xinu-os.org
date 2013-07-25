@@ -43,6 +43,11 @@ class AccountsProfileView(DetailView, ProcessFormView, FormMixin):
             context['form'] = self.get_form()
         return context
 
+    def form_invalid(self, form, **kwargs):
+        context = self.get_context_data(**kwargs)
+        context['form'] = form
+        return self.render_to_response(context)
+
     def get_success_url(self):
         pk = self.request.user.pk
         return reverse('accounts:user-profile', kwargs={'pk': pk})
