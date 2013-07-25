@@ -3,7 +3,6 @@ logging.disable(logging.WARNING)
 
 import httplib
 
-from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
 from django.core.urlresolvers import reverse
@@ -38,17 +37,14 @@ class KernelsUploadTest(TestCase):
         return login
 
     def _submit_upload(self, user):
-        with open(settings.TEST_DATA_PATH.child('example.bin')) as f:
-            # Read file for testing later
-            contents = f.read()
-            # Reset to beginning
-            f.seek(0)
-            response = self.client.post(self.url, {
-                'owner': user.pk,
-                'image': f,
-                'access_level': Kernel.ACCESS_LEVELS[0][0],
-            })
-        return response, contents
+        content = 'DATA'
+        f = ContentFile(content, 'content_file')
+        response = self.client.post(self.url, {
+            'owner': user.pk,
+            'image': f,
+            'access_level': Kernel.ACCESS_LEVELS[0][0],
+        })
+        return response, content
 
     def test_upload(self):
         self.assertTrue(self._login_user(self.user1))
@@ -93,10 +89,8 @@ class KernelsDetailViewTest(TestCase):
         self.kernel2 = self._create_kernel(Kernel.ACCESS_PRIVATE)
 
     def _create_kernel(self, access_level):
-        f = ContentFile(Kernel.ACCESS_LEVELS[access_level][1])
-        f.name = 'access_file'
-        kernel = Kernel.objects.create(owner=self.user1,
-                                       image=f,
+        f = ContentFile(Kernel.ACCESS_LEVELS[access_level][1], 'content_file')
+        kernel = Kernel.objects.create(owner=self.user1, image=f,
                                        access_level=access_level)
         return kernel
 

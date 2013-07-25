@@ -196,7 +196,6 @@ TRACK_PAGEVIEWS = True
 
 # Test settings
 TEST_RUNNER = 'discover_runner.DiscoverRunner'
-TEST_DATA_PATH = BASE_PATH.child('tests').child('data')
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

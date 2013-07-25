@@ -19,10 +19,8 @@ class KernelsUserKernelsTagTestCase(TestCase):
         self.kernel3 = self._create_kernel(self.user2, Kernel.ACCESS_PUBLIC)
 
     def _create_kernel(self, user, access_level):
-        f = ContentFile(Kernel.ACCESS_LEVELS[access_level][1])
-        f.name = 'access_file'
-        kernel = Kernel.objects.create(owner=user,
-                                       image=f,
+        f = ContentFile(Kernel.ACCESS_LEVELS[access_level][1], 'content_file')
+        kernel = Kernel.objects.create(owner=user, image=f,
                                        access_level=access_level)
         return kernel
 
