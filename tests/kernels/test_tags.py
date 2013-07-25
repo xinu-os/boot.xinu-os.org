@@ -1,11 +1,17 @@
+import tempfile
+import shutil
+
+from django.conf import settings
 from django.core.files.base import ContentFile
 from django.contrib.auth.models import User
 from django.test import TestCase
+from django.test.utils import override_settings
 
 from kernels.templatetags import kernel_tags
 from kernels.models import Kernel
 
 
+@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
 class KernelsUserKernelsTagTestCase(TestCase):
     def setUp(self):
         # two users, user 1 has 3 images
@@ -17,6 +23,9 @@ class KernelsUserKernelsTagTestCase(TestCase):
         self.kernel2 = self._create_kernel(self.user1, Kernel.ACCESS_PRIVATE)
         # Crate a fourth kernel owned by user2
         self.kernel3 = self._create_kernel(self.user2, Kernel.ACCESS_PUBLIC)
+
+    def tearDown(self):
+        shutil.rmtree(settings.MEDIA_ROOT)
 
     def _create_kernel(self, user, access_level):
         f = ContentFile(Kernel.ACCESS_LEVELS[access_level][1], 'content_file')

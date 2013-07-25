@@ -2,16 +2,20 @@ import logging
 logging.disable(logging.WARNING)
 
 import httplib
+import tempfile
+import shutil
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
 from django.core.urlresolvers import reverse
 from django.test import TestCase
-from unipath import Path
+from django.test.utils import override_settings
 
 from kernels.models import Kernel
 
 
+@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
 class KernelsUploadTest(TestCase):
     def setUp(self):
         self.url = reverse('kernels:upload')
@@ -27,9 +31,7 @@ class KernelsUploadTest(TestCase):
         self.user2.plaintext = self.password2
 
     def tearDown(self):
-        for kernel in self.kernels:
-            p = Path(kernel.image.path)
-            p.remove()
+        shutil.rmtree(settings.MEDIA_ROOT, ignore_errors=True)
 
     def _login_user(self, user):
         login = self.client.login(username=user.username,
@@ -76,6 +78,7 @@ class KernelsUploadTest(TestCase):
         self.assertEqual(response.status_code, httplib.FORBIDDEN)
 
 
+@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
 class KernelsDetailViewTest(TestCase):
 
     def setUp(self):
@@ -87,6 +90,9 @@ class KernelsDetailViewTest(TestCase):
         self.kernel0 = self._create_kernel(Kernel.ACCESS_PUBLIC)
         self.kernel1 = self._create_kernel(Kernel.ACCESS_LINK)
         self.kernel2 = self._create_kernel(Kernel.ACCESS_PRIVATE)
+
+    def tearDown(self):
+        shutil.rmtree(settings.MEDIA_ROOT)
 
     def _create_kernel(self, access_level):
         f = ContentFile(Kernel.ACCESS_LEVELS[access_level][1], 'content_file')
