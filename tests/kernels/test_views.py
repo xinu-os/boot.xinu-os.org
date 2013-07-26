@@ -114,7 +114,7 @@ class KernelsDetailViewTest(TestCase):
         self.assertTemplateUsed(response, 'kernels/view.html')
         # KernelsImageView
         url = self._get_image_url(kernel.pk)
-        response = self.client.get(url)
+        response = self.client.get(url, HTTP_REFERER=url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, kernel.image.read())
 

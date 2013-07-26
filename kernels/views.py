@@ -54,6 +54,10 @@ class KernelsImageView(View, KernelProtectedMixin):
     def get(self, request, *args, **kwargs):
         pk = kwargs['pk']
         kernel = Kernel.objects.get(pk=pk)
-        if self.is_private(kernel):
+        referrer = request.META.get('HTTP_REFERER', [])
+        view_url = reverse('kernels:view', kwargs={'pk': pk})
+        # Permission Denied for hotlinkers and private kernels
+        hotlinking = view_url not in referrer
+        if self.is_private(kernel) or hotlinking:
             raise PermissionDenied
         return HttpResponse(kernel.image, content_type=self.content_type)
