@@ -50,6 +50,8 @@ function load_pc(kernel, mem_size) {
         }
     };
 
+    console.log("loader_base@0x"+init_state.loader_base.toString(16));
+    console.log("kernel_base@0x"+init_state.kernel_base.toString(16));
     pc = new PCEmulator(init_state.pc_params);
     load_bootloader(0);
 }
@@ -81,6 +83,7 @@ function boot_pc(status) {
     pc.cpu.eip = init_state.loader_base;
     pc.cpu.regs[0] = init_state.pc_params.mem_size; /* EAX */
     boot_start_time = (+new Date());
+    console.log("Starting Xinu on", Date(boot_start_time));
     pc.start();
 }
 

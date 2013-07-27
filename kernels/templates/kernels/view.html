@@ -28,7 +28,10 @@ View: {{ object }}
 {% block extra_body %}
 <script type="text/javascript">
     window.onload = function (e) {
-        load_pc("{% url "kernels:image" object.pk %}", 16 * 1024 * 1024);
+        var kernel = "{% url "kernels:image" object.pk %}";
+        var kernel_mem = 16 * 1024 * 1024;
+        console.log("Starting", kernel, "with", kernel_mem, "bytes");
+        load_pc(kernel, kernel_mem);
     }
 </script>
 {% endblock extra_body %}
