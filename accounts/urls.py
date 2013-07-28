@@ -15,5 +15,5 @@ urlpatterns = patterns('',
         kwargs={'next_page': '/'}, name='logout'),
     url(r'^(?P<pk>\d+)/$', AccountsProfileView.as_view(), name='user-profile'),
     url(r'^profile/$', AccountsRedirectView.as_view(), name='profile'),
-    url(r'^$', AccountsRedirectView.as_view(), name='base'),
+    url(r'^$', AccountsRedirectView.as_view(), name='index'),
 )

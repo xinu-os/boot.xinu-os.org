@@ -3,7 +3,7 @@ from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import HttpResponse
 from django.views.generic import View, DetailView, CreateView, DeleteView
 
-from boot.lib.views import ProtectedMixin
+from shared.views import ProtectedMixin
 from kernels.models import Kernel
 from kernels.forms import KernelUploadForm
 

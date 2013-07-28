@@ -125,7 +125,6 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    BASE_PATH.child('boot').child('templates'),
 )
 
 INSTALLED_APPS = (
@@ -144,11 +143,13 @@ INSTALLED_APPS = (
     'social_auth',
     'tracking',
 
+    'shared',
     'accounts',
     'kernels',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS += (
+    'django.core.context_processors.request',
     'social_auth.context_processors.social_auth_by_name_backends',
     'social_auth.context_processors.social_auth_backends',
     'social_auth.context_processors.social_auth_by_type_backends',

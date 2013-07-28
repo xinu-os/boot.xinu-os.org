@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load url from future %}
+
+{% block title %}Home &gt; {{ block.super }}{% endblock title %}
+
+{% block content %}
+<h1>Xinu Web</h1>
+<p>We want to make it super simple to build and run your own kernel to help
+teach aspiring technologists about systems development.</p>
+
+<h2>Demonstration</h2>
+<p>Below you can see and interact with the <a href="https://github.com/xinu-os/xinu/">latest master branch</a> of the Embedded Xinu operating system</p>
+
+<h2>Develop!</h2>
+<p>Feel free to fork the <a href="https://github.com/xinu-os/xinu/">Embedded Xinu repo</a>, build your own kernel, <a href="{% url "accounts:index" %}">create an account</a>, upload your kernel, watch it boot, and <a href="{% url "kernels:index" %}">show off</a> to your friends.</p>
+{% endblock content %}

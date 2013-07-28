@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.views.generic import DetailView, RedirectView
 from django.views.generic.edit import ProcessFormView, FormMixin
 
-from boot.lib.views import ProtectedMixin
+from shared.views import ProtectedMixin
 from accounts.models import Profile
 from accounts.forms import ProfileForm
 

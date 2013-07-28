@@ -3,7 +3,7 @@ from django.test.client import RequestFactory
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
-from boot.lib.views import ProtectedMixin
+from shared.views import ProtectedMixin
 from accounts.views import AccountsProfileView
 
 

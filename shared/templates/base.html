@@ -1,0 +1,70 @@
+{% load shared_tags %}
+{% load url from future %}
+{% url "accounts:user-profile" pk=user.pk as user_url %}
+{% url "index" as home_url %}
+{% url "kernels:index" as kernels_url %}
+{% url "about" as about_url %}
+<!doctype html>
+<html lang="en-us">
+    <head>
+        <meta charset="utf-8">
+        <title>{% block title %}Xinu Web{% endblock title %}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- Bootstrap -->
+        <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/css/bootstrap.min.css" rel="stylesheet">
+        <link href="{{ STATIC_URL }}css/boot.css" rel="stylesheet">
+        {% block extra_head %}{% endblock extra_head %}
+    </head>
+    <body>
+        <!-- navigation -->
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{% url "index" %}">Xinu Web</a>
+                <div class="nav-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li class="{% active home_url %}"><a href="{% url "index" %}">Home</a></li>
+                    <li class="{% active kernels_url %}"><a href="{% url "kernels:index" %}">Kernels</a></li>
+                    <li class="{% active about_url %}"><a href="{% url "about" %}">About</a></li>
+                </ul>
+                <ul class="nav navbar-nav pull-right">
+                    <li class="dropdown {% active user_url %}">
+                        <a href="{% url "accounts:profile" %}" class="dropdown-toggle" data-toggle="dropdown">
+                            {% if user.is_authenticated %}{{ user.profile.name }}{% else %}Get Started!{% endif %}
+                            <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu dropdown-inverse">
+                        {% if user.is_authenticated %}
+                            <li><a href="{% url "accounts:profile" %}">View Profile</a></li>
+                            <li><a href="{% url "kernels:upload" %}">Upload Kernel</a></li>
+                            <li><a href="{% url "accounts:logout" %}">Sign Out</a></li>
+                        {% else %}
+                            <li class="dropdown-header">Sign In via</li>
+                            <li><a href="{% url "accounts:socialauth_begin" "github" %}">GitHub</a></li>
+                            <li><a href="{% url "accounts:socialauth_begin" "google-oauth2" %}">Google</a></li>
+                        {% endif %}
+                            <li class="divider"></li>
+                            <li><a href="https://github.com/xinu-os/xinu/">Clone Xinu</a></li>
+                            <li><a href="http://xinu-os.org/Build_Xinu">Build Xinu</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                </div><!--/.nav-collapse -->
+            </div><!-- /.container -->
+        </div><!-- /.navbar -->
+
+        <div class="container">
+{% block content %}{% endblock content %}
+        </div><!-- /.container -->
+
+        <!-- JavaScript plugins (requires jQuery) -->
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <!-- Include all compiled plugins (below), or include individual files as needed -->
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/js/bootstrap.min.js"></script>
+        {% block extra_body %}{% endblock extra_body %}
+    </body>
+</html>
