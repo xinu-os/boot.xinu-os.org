@@ -12,6 +12,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <!-- Bootstrap -->
         <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/css/bootstrap.min.css" rel="stylesheet">
+        <link href="{{ STATIC_URL }}css/bootstrap-glyphicons.css" rel="stylesheet">
         <link href="{{ STATIC_URL }}css/boot.css" rel="stylesheet">
         {% block extra_head %}{% endblock extra_head %}
     </head>
@@ -34,7 +35,8 @@
                 <ul class="nav navbar-nav pull-right">
                     <li class="dropdown {% active user_url %}">
                         <a href="{% url "accounts:profile" %}" class="dropdown-toggle" data-toggle="dropdown">
-                            {% if user.is_authenticated %}{{ user.profile.name }}{% else %}Get Started!{% endif %}
+                            {% if user.is_authenticated %}<span class="glyphicon glyphicon-user"></span> {{ user.profile.name }}
+                            {% else %}Get Started!{% endif %}
                             <b class="caret"></b>
                         </a>
                         <ul class="dropdown-menu dropdown-inverse">
