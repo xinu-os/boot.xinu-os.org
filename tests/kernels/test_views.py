@@ -4,6 +4,7 @@ logging.disable(logging.WARNING)
 import httplib
 import tempfile
 import shutil
+import os.path
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -76,6 +77,71 @@ class KernelsUploadTest(TestCase):
         self.assertEqual(self.kernels.count(), 0)
         # user doesn't match owner, forbidden
         self.assertEqual(response.status_code, httplib.FORBIDDEN)
+
+
+@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
+class KernelsDeleteViewTest(TestCase):
+
+    def setUp(self):
+        # upload kernel as user
+        self.password = 'test1'
+        self.user1 = User.objects.create_user('test1',
+                                              'a@example.com',
+                                              self.password)
+        self.user2 = User.objects.create_user('test2',
+                                              'a@example.com',
+                                              self.password)
+        f = ContentFile('kwyjibo', 'content_file')
+        self.kernel = Kernel.objects.create(owner=self.user1, image=f,
+                                            access_level=Kernel.ACCESS_PUBLIC)
+        self.url = reverse('kernels:delete', kwargs={'pk': self.kernel.pk})
+
+    def _login(self, user):
+        login = self.client.login(username=user.username,
+                                  password=self.password)
+        self.assertTrue(login)
+        return login
+
+    def test_delete_get_self(self):
+        self._login(self.user1)
+        response = self.client.get(self.url)
+        self.assertTemplateUsed(response, 'kernels/kernel_confirm_delete.html')
+
+    def test_delete_get_other(self):
+        # Forbidden
+        self._login(self.user2)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, httplib.FORBIDDEN)
+
+    def test_delete_get_anon(self):
+        # Forbidden
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, httplib.FORBIDDEN)
+
+    def test_delete_kernel_own(self):
+        # Make sure user can delete their own kernel
+        self._login(self.user1)
+        path = self.kernel.image.path
+        pk = self.kernel.owner.pk
+        response = self.client.post(self.url, {}, follow=True)
+        self.assertRedirects(response, reverse('accounts:user-profile',
+                                               kwargs={'pk': pk}))
+        self.assertFalse(os.path.exists(path))
+
+    def test_delete_kernel_other(self):
+        # Forbidden
+        self._login(self.user2)
+        path = self.kernel.image.path
+        response = self.client.post(self.url, {})
+        self.assertEqual(response.status_code, httplib.FORBIDDEN)
+        self.assertTrue(os.path.exists(path))
+
+    def test_delete_kernel_anon(self):
+        # Forbidden
+        path = self.kernel.image.path
+        response = self.client.post(self.url, {})
+        self.assertEqual(response.status_code, httplib.FORBIDDEN)
+        self.assertTrue(os.path.exists(path))
 
 
 @override_settings(MEDIA_ROOT=tempfile.mkdtemp())

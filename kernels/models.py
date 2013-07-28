@@ -38,6 +38,10 @@ class Kernel(models.Model):
         self.checksum = checksum.hexdigest()
         return super(Kernel, self).save(*args, **kwargs)
 
+    def delete(self, *args, **kwargs):
+        self.image.delete(False)
+        return super(Kernel, self).delete(*args, **kwargs)
+
     def __unicode__(self):
         return 'Kernel({0}, {1}, {2})'.format(self.owner,
                                               self.access_level,

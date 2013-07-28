@@ -15,6 +15,10 @@
 {% static "kernels/js/cpux86.js" as js_cpux86 %}
 {% static "kernels/js/jsxinu.js" as js_xinu %}
 View: {{ object }}
+
+<form method="get" action="{% url "kernels:delete" pk=object.pk %}">
+    <input type="submit" name="delete" value="Delete" />
+</form>
 <hr />
 
 

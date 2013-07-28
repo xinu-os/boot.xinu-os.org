@@ -1,7 +1,7 @@
 from django.core.exceptions import PermissionDenied
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import HttpResponse
-from django.views.generic import View, DetailView, CreateView
+from django.views.generic import View, DetailView, CreateView, DeleteView
 
 from boot.lib.views import ProtectedMixin
 from kernels.models import Kernel
@@ -61,3 +61,20 @@ class KernelsImageView(View, KernelProtectedMixin):
         if self.is_private(kernel) or hotlinking:
             raise PermissionDenied
         return HttpResponse(kernel.image, content_type=self.content_type)
+
+
+class KernelsDeleteView(DeleteView):
+    model = Kernel
+    success_url = reverse_lazy('accounts:profile')
+
+    def get(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if obj.owner != self.request.user:
+            raise PermissionDenied
+        return super(KernelsDeleteView, self).get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if obj.owner != self.request.user:
+            raise PermissionDenied
+        return super(KernelsDeleteView, self).post(request, *args, **kwargs)
