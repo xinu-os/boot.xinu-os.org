@@ -29,7 +29,7 @@ class Kernel(models.Model):
     checksum = models.CharField(max_length=40, primary_key=True)
     owner = models.ForeignKey(User)
     timestamp = models.DateTimeField(auto_now=True)
-    image = models.FileField(upload_to=get_image_path)
+    image = models.FileField("Kernel Image", upload_to=get_image_path)
     access_level = models.SmallIntegerField(choices=ACCESS_LEVELS, default=0)
 
     def save(self, *args, **kwargs):

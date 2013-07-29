@@ -1,11 +1,27 @@
 {% extends "base.html" %}
+{% load widget_tweaks %}
 
 {% block content %}
-
-<form method="post" enctype="multipart/form-data">
+<h1>Upload a Kernel</h1>
+<hr/>
+<form method="post" enctype="multipart/form-data" class="form-horizontal">
     {% csrf_token %}
-    {{ form }}
-    <input type="submit" name="submit" value="Upload" />
+    <div class="form-group">
+        {% with form.access_level as field %}
+        <label for="id_{{ field.html_name }}" class="col-lg-2 control-label">{{ field.label }}</label>
+        <div class="col-lg-10">
+            {{ field|add_class:"form-control" }}
+        </div>
+        {% endwith %}
+    </div>
+    <div class="form-group">
+        {% with form.image as field %}
+        <label for="id_{{ field.html_name }}" class="col-lg-2 control-label">{{ field.label }}</label>
+        <div class="col-lg-10">
+            {{ field|add_class:"form-control" }}
+        </div>
+        {% endwith %}
+    </div>
+    <button class="btn btn-default pull-right" type="submit" name="submit">Upload</button>
 </form>
-
 {% endblock content %}

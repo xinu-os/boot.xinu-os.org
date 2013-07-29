@@ -19,4 +19,4 @@ class KernelUploadForm(forms.ModelForm):
 
     class Meta:
         model = Kernel
-        exclude = ['checksum']
+        exclude = ['owner', 'checksum']
