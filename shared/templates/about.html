@@ -4,5 +4,29 @@
 {% block title %}About &gt; {{ block.super }}{% endblock title %}
 
 {% block content %}
-About
+<h1>About Xinu Web</h1>
+<hr/>
+<p>Xinu Web is an experiment designed to negate the typical problems with
+kernel development (infrastructure, costs, hassle). Though Xinu is not a
+full-fledged kernel, it is built with educational value in mind.</p>
+
+<p>This web site leverages various technologies to make it possible to boot
+the kernel in your browser. Most notably is the
+<a href="http://bellard.org/jslinux/">Javascript PC Emulator built (and
+    copyright) by Fabrice Bellard</a>.</p>
+
+<p>Beyond that, Xinu Web uses Django, jQuery, Bootstrap, Amazon EC2, and
+PostgreSQL. The actual Xinu kernel is release under a 3-point BSD-style
+license and the toolchain used to build it is built using crosstool-NG.</p>
+
+<p>This is an on-going experiment. Long term goals include, but are not
+limited to:
+<ul>
+    <li>Debugging, disk, and network support (to varying degrees)</li>
+    <li>Open source Javascript PC Emulator</li>
+    <li>Other open source Javascript Emulator (ARM, MIPS)</li>
+    <li>Use existing infrastructures to permit booting a raw hardware
+    remotely</li>
+</ul>
+</p>
 {% endblock content %}

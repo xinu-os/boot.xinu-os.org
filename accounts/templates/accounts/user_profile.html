@@ -7,7 +7,7 @@
 {% block content %}
 {% with object.profile as profile %}
 <h1>{{ profile.name }}</h1>
-
+<hr/>
 {% if my_account %}<form method="post" class="form-horizontal">{% csrf_token %}
 {% else %}<div class="non-form form-horizontal">{% endif %}
 {{ form.non_field_errors }}
