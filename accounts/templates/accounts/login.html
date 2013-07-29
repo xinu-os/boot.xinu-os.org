@@ -2,22 +2,24 @@
 {% load url from future %}
 
 {% block content %}
+{% url "accounts:socialauth_begin" "github" as github_url %}
+{% url "accounts:socialauth_begin" "google-oauth2" as google_url %}
+{# {% url "accounts:create" as create_url %} #}
+<h1>Sign In</h1>
+
+<p>Sign in via one of the supported channels.</p>
+<div class="list-group">
+    <a href="{{ github_url }}" class="list-group-item">GitHub</a>
+    <a href="{{ google_url }}" class="list-group-item">Google</a>
+    <!-- <a href="{{ create_url }}" class="list-group-item">create an account</a> -->
+</div>
+
+<!--
 {% if form.errors %}
 <p class="error">
     Your username and password did not match. Please try again.
 </p>
 {% endif %}
-<p>
-    Login via
-    <a href="{% url "accounts:socialauth_begin" "github" %}">GitHub</a>
-    or
-    <a href="{% url "accounts:socialauth_begin" "google-oauth1" %}">Google</a>
-    <!--
-    or
-    <a href="">create an account</a>.
-    -->
-</p>
-<!--
 <form method="post" action="{% url 'accounts:login' %}">
     {% csrf_token %}
     <table>
