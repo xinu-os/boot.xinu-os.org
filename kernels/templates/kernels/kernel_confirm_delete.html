@@ -1,11 +1,22 @@
 {% extends "base.html" %}
 
 {% block content %}
-
-<form method="post">
+<h1>Delete a Kernel</h1>
+<form method="post" class="form-horizontal">
     {% csrf_token %}
-    You sure you want to delete: {{ object }}?
-    <input type="submit" name="delete" value="Delete" />
+    <div class="form-group">
+        <label class="col-lg-2 control-label">Delete Image</label>
+        <div class="col-lg-10 non-form-control"><code>{{ object.pk }}</code></div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-2 control-label">Upload Date</label>
+        <div class="col-lg-10 non-form-control">{{ object.timestamp }}</div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-2 control-label">Access Level</label>
+        <div class="col-lg-10 non-form-control">{{ object.get_access_level_display }}</div>
+    </div>
+    <button class="btn btn-default pull-right" type="submit" name="delete">Delete this Kernel</button>
 </form>
 
 {% endblock content %}

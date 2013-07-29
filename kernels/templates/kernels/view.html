@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 {% load static from staticfiles %}
 
-{% block title %}Kernel View &gt; {{ block.super }}{% endblock title %}
+{% block title %}Kernel Boot &gt; {{ block.super }}{% endblock title %}
 {% block extra_head %}
+<link href="{{ STATIC_URL }}kernels/css/term.css" rel="stylesheet">
 <script type="text/javascript">
     /* Simple method to enable STATIC_URL in javascript files */
     var STATIC_URL = "{{ STATIC_URL|escapejs }}";
@@ -10,32 +11,48 @@
 {% endblock extra_head %}
 
 {% block content %}
-{% static "kernels/jslinux/utils.js" as jslinux_utils %}
-{% static "kernels/jslinux/term.js" as jslinux_term %}
-{% static "kernels/js/cpux86.js" as js_cpux86 %}
-{% static "kernels/js/jsxinu.js" as js_xinu %}
-View: {{ object }}
+<h1>Kernel Boot <small><code>{{ object.pk }}</code></small></h1>
+<hr/>
 
-<form method="get" action="{% url "kernels:delete" pk=object.pk %}">
-    <input type="submit" name="delete" value="Delete" />
-</form>
-<hr />
+<div class="clearfix"></div>
+<div class="container">
+    <div id="terminal">
+        {% static "kernels/jslinux/utils.js" as jslinux_utils %}
+        {% static "kernels/jslinux/term.js" as jslinux_term %}
+        {% static "kernels/js/cpux86.js" as js_cpux86 %}
+        {% static "kernels/js/jsxinu.js" as js_xinu %}
+        <script type="text/javascript" src="{{ jslinux_utils }}"></script>
+        <script type="text/javascript" src="{{ jslinux_term }}"></script>
+        <script type="text/javascript" src="{{ js_cpux86 }}"></script>
+        <script type="text/javascript" src="{{ js_xinu }}"></script>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                // create the VM and load the PC
+                var kernel = "{% url "kernels:image" object.pk %}";
+                var kernel_mem = 16 * 1024 * 1024;
+                console.log("Starting", kernel, "with", kernel_mem, "bytes");
+                load_pc(kernel, kernel_mem);
+            });
+        </script>
+    </div>
+</div>
+<div class="clearfix"></div>
 
-
-<script type="text/javascript" src="{{ jslinux_utils }}"></script>
-<script type="text/javascript" src="{{ jslinux_term }}"></script>
-<script type="text/javascript" src="{{ js_cpux86 }}"></script>
-<script type="text/javascript" src="{{ js_xinu }}"></script>
-
+<hr/>
+<div class="row">
+    <dl class="dl-horizontal col-lg-8">
+        <dt>Access Level</dt>
+        <dd>{{ object.get_access_level_display }}</dd>
+        <dt>Upload Date</dt>
+        <dd>{{ object.timestamp }}</dd>
+        <dt>Owner</dt>
+        <dd>{{ object.owner }}</dd>
+    </dl>
+    <form method="get" action="{% url "kernels:delete" pk=object.pk %}" class="col-lg-4">
+        <button class="btn btn-default pull-right" type="submit" name="delete">Delete this Kernel</button>
+    </form>
+</div>
 {% endblock content %}
 
 {% block extra_body %}
-<script type="text/javascript">
-    window.onload = function (e) {
-        var kernel = "{% url "kernels:image" object.pk %}";
-        var kernel_mem = 16 * 1024 * 1024;
-        console.log("Starting", kernel, "with", kernel_mem, "bytes");
-        load_pc(kernel, kernel_mem);
-    }
-</script>
 {% endblock extra_body %}

@@ -6,6 +6,7 @@
 <hr/>
 <form method="post" enctype="multipart/form-data" class="form-horizontal">
     {% csrf_token %}
+    {{ form.owner.as_hidden }}
     <div class="form-group">
         {% with form.access_level as field %}
         <label for="id_{{ field.html_name }}" class="col-lg-2 control-label">{{ field.label }}</label>

@@ -1,9 +1,14 @@
+#terminal {
+    margin: 0 150px;
+}
+
 .term {
     font-family: courier, fixed, swiss, monospace, sans-serif;
-    font-size: 1.4em;
+    font-size: 1.0em;
     color: #f0f0f0;
     background: #000000;
 }
+
 .termReverse {
     color: #000000;
     background: #00ff00;
