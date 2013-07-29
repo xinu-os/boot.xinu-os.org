@@ -26,3 +26,9 @@ class SharedTagsTestCase(TestCase):
         context = {'request': request}
         active = shared_tags.active(context, url)
         self.assertNotEqual(active, 'active')
+
+    def test_anti_spam(self):
+        pre = 'fake-email+address@example.org'
+        post = 'fake {dash} email {plus} address {at} example {dot} org'
+        real = shared_tags.anti_spam(pre)
+        self.assertEqual(post, real)

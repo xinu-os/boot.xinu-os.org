@@ -37,8 +37,15 @@ class KernelsUserKernelsTagTestCase(TestCase):
         """Make sure all elements in a queryset are equal.
 
         I couldn't get the actual function to work, bad transform?"""
-        for a, e in zip(actual, expected):
-            self.assertEqual(a, e)
+        for a in actual:
+            self.assertIn(a, expected)
+
+    def test_all_kernels(self):
+        context = {}
+        tag_ctx = kernel_tags.all_kernels(context)
+        actual = tag_ctx['kernels']
+        expected = Kernel.objects.filter(access_level=Kernel.ACCESS_PUBLIC)
+        self._assertQuerysetEqual(actual, expected)
 
     def test_bad_context(self):
         context = {}
