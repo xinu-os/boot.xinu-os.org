@@ -1,9 +1,13 @@
 {% load url from future %}
 <hr/>
-<h2>Available Kernels <small><a href="{% url "kernels:upload" %}">Upload</a></small></h2>
+<h2>
+    {{ header }}
+    {% if user.is_authenticated %}<small><a href="{% url "kernels:upload" %}">Upload</a></small>{% endif %}
+</h2>
 <table class="table table-condensed table-hover">
     <thead>
         <tr>
+            {% if show_owner %}<td>Owner</td>{% endif %}
             <th>Upload Time</th>
             <th>Access Level</th>
             <th>Checksum</th>
@@ -12,7 +16,9 @@
     <tbody>
 {% for kernel in kernels %}
 {% url "kernels:view" pk=kernel.pk as kernel_url %}
+{% url "accounts:user-profile" pk=kernel.owner.pk as user_url %}
         <tr>
+            {% if show_owner %}<td><a href="{{ user_url }}">{{ kernel.owner }}</a></td>{% endif %}
             <td><a href="{{ kernel_url }}">{{ kernel.timestamp }}</a></td>
             <td><a href="{{ kernel_url }}">{{ kernel.get_access_level_display }}</a></td>
             <td><a href="{{ kernel_url }}"><code>{{ kernel.pk }}</code></a></td>

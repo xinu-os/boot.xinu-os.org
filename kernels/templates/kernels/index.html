@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 {% load url from future %}
+{% load kernel_tags %}
 
 {% block title %}Home &gt; {{ block.super }}{% endblock title %}
 
 {% block content %}
-Hello
+{% all_kernels %}
 {% endblock content %}
