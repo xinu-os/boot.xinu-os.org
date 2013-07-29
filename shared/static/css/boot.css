@@ -1,3 +1,17 @@
 body {
     padding-top: 60px;
 }
+
+.non-form .control-label {
+    padding-top: 0;
+    margin: 0;
+}
+
+.non-form .form-group {
+    margin: 0;
+}
+
+form .non-form-control {
+    height: 38px;
+    padding: 8px 12px;
+}

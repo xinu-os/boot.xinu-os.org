@@ -1,32 +1,41 @@
 {% extends "base.html" %}
 {% load url from future %}
 {% load kernel_tags %}
+{% load shared_tags %}
+{% load widget_tweaks %}
 
 {% block content %}
-You are: {{ user }}, <a href="{% url 'accounts:logout' %}">logout</a>
+{% with object.profile as profile %}
+<h1>{{ profile.name }}</h1>
 
-<hr/>
-
-Viewing: {{ object }}
-
-<hr/>
-
-Profile: {{ object.profile }}
-
-<hr/>
-
-<a href="{% url "kernels:upload" %}">Upload a kernel</a>
-
+{% if my_account %}<form method="post" class="form-horizontal">{% csrf_token %}
+{% else %}<div class="non-form form-horizontal">{% endif %}
+{{ form.non_field_errors }}
+<div class="form-group">
+    <label for="" class="col-lg-2 control-label">User Since</label>
+    <div class="col-lg-10 non-form-control">{{ object.date_joined }}</div>
+</div>
+{% for field in form %}
+<div class="form-group">
+    <label for="id_{{ field.html_name }}" class="col-lg-2 control-label">{{ field.label }}</label>
+    <div class="col-lg-10">
+    {% if my_account %}{{ field|add_class:"form-control" }}
+    {% else %}{{ field.value }}{% endif %}
+    </div>
+    {% if field.errors %}<dd class="alert alert-danger">
+        <a class="close" data-dismiss="alert" href="#">&times;</a>
+        <strong>Error:</strong> {% for error in field.errors %}{{ error }}{% endfor %}
+    </dd>{% endif %}
+</div>
+{% endfor %}
+{% if my_account %}
+    <button type="submit" class="btn btn-default pull-right">Update</button>
+</form>
+{% else %}
+</div>
+{% endif %}
+<div class="clearfix"></div>
 {% user_kernels user %}
 
-<hr/>
-
-{% if form %}
-<form method="post">
-    {% csrf_token %}
-    {{ form }}
-    <input type="submit" name="submit" value="Submit" />
-</form>
-{% endif %}
-
-{% endblock %}
+{% endwith %}
+{% endblock content %}

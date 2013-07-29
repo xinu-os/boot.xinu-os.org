@@ -28,7 +28,7 @@ class AccountsProfileView(DetailView, ProcessFormView, FormMixin):
     def get_form(self, form_class=None):
         if form_class is None:
             form_class = self.get_form_class()
-        user = self.request.user
+        user = self.get_object()
         profile = Profile.objects.get_profile(user=user)
         if self.request.POST:
             form = form_class(self.request.POST, instance=profile)
@@ -40,12 +40,16 @@ class AccountsProfileView(DetailView, ProcessFormView, FormMixin):
         context = super(AccountsProfileView, self).get_context_data(**kwargs)
         # Only add form context if your own account
         if ProtectedMixin.is_my_account(self):
-            context['form'] = self.get_form()
+            context['my_account'] = True
+        else:
+            context['my_account'] = False
+        context['form'] = self.get_form()
         return context
 
     def form_invalid(self, form, **kwargs):
         context = self.get_context_data(**kwargs)
         context['form'] = form
+        context['object'] = self.get_object()
         return self.render_to_response(context)
 
     def get_success_url(self):

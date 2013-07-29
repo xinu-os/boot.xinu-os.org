@@ -13,3 +13,12 @@ def active(context, url):
         return 'active'
     else:
         return ''
+
+
+@register.filter
+def anti_spam(value):
+    value = value.replace('@', ' {at} ')
+    value = value.replace('.', ' {dot} ')
+    value = value.replace('+', ' {plus} ')
+    value = value.replace('-', ' {dash} ')
+    return value

@@ -142,6 +142,7 @@ INSTALLED_APPS = (
     'south',
     'social_auth',
     'tracking',
+    'widget_tweaks',
 
     'shared',
     'accounts',

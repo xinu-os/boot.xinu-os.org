@@ -91,7 +91,8 @@ class AccountsProfileTest(TestCase):
         self.client.logout()
         response = self.client.get(reverse('accounts:user-profile',
                                            kwargs={'pk': user.pk}))
-        self.assertNotIn('form', response.context_data)
+        # Form is in context, but cannot be post'd to
+        self.assertIn('form', response.context_data)
 
     def test_profile_get_with_user(self):
         user = self._login_user()
@@ -112,7 +113,10 @@ class AccountsProfileTest(TestCase):
         user = self._login_user()
         name = 'My Name'
         target_url = reverse('accounts:user-profile', kwargs={'pk': user.pk})
-        response = self.client.post(target_url, {'name': name})
+        response = self.client.post(target_url, {
+            'name': name,
+            'email': user.email
+        })
         self.assertRedirects(response, target_url)
         # confirm that name was saved
         response = self.client.get(target_url)

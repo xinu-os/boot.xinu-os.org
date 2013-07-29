@@ -1,10 +1,27 @@
 {% load url from future %}
-<ul>
+<hr/>
+<h2>Available Kernels <small><a href="{% url "kernels:upload" %}">Upload</a></small></h2>
+<table class="table table-condensed table-hover">
+    <thead>
+        <tr>
+            <th>Upload Time</th>
+            <th>Access Level</th>
+            <th>Checksum</th>
+        </tr>
+    </thead>
+    <tbody>
 {% for kernel in kernels %}
-<li>
-    <a href="{% url "kernels:view" pk=kernel.pk %}">
-        {{ kernel.get_access_level_display }} Kernel {{ kernel.pk }}
-    </a>
-</li>
+{% url "kernels:view" pk=kernel.pk as kernel_url %}
+        <tr>
+            <td><a href="{{ kernel_url }}">{{ kernel.timestamp }}</a></td>
+            <td><a href="{{ kernel_url }}">{{ kernel.get_access_level_display }}</a></td>
+            <td><a href="{{ kernel_url }}"><code>{{ kernel.pk }}</code></a></td>
+        </tr>
 {% endfor %}
-</ul>
+{% if not kernels %}
+        <tr>
+            <td colspan="3"><em class="text-muted">None Available</em></td>
+        </tr>
+{% endif %}
+    </tbody>
+</table>
