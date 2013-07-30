@@ -1,10 +1,9 @@
 # Django settings for boot project.
 from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS
-from django.utils import simplejson as json
 import dj_database_url
 from unipath import Path
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 # Get the base path of the projects
@@ -22,10 +21,12 @@ DATABASES = {'default': dj_database_url.config(default=DEFAULT_DB)}
 
 # Load the secrets file
 try:
-    with open(BASE_PATH.parent.child('secrets.json')) as handle:
-        SECRETS = json.load(handle)
+    with open(BASE_PATH.child('.env')) as handle:
+        env = handle.read()
+        SECRETS = dict(var.split('=', 1) for var in env.split())
 except IOError:
-    SECRETS = {}
+    import os
+    SECRETS = os.environ
 
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
