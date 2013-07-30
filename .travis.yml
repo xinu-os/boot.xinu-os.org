@@ -11,6 +11,7 @@ env:
   - DB="mysql"  DATABASE_URL="mysql://travis@127.0.0.1/test_djangodb"
 before_script:
   - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE DATABASE test_djangodb;' -U postgres; fi"
+  - sh -c "if [ '$DB' = 'mysql' ]; then pip install MySQL-python ; fi"
   - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE test_djangodb;' ; fi"
 script:
   - "coverage run manage.py test"
