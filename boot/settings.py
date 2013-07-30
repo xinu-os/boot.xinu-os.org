@@ -9,16 +9,6 @@ TEMPLATE_DEBUG = DEBUG
 # Get the base path of the projects
 BASE_PATH = Path(__file__).absolute().ancestor(2)
 
-ADMINS = (
-    ('Team Xinu', 'xinu@xinu-os.org'),
-)
-
-MANAGERS = ADMINS
-
-# Parse database configuration from $DATABASE_URL (but specify default)
-DEFAULT_DB = 'sqlite:///{db}'.format(db=BASE_PATH.child('boot-xinu.db'))
-DATABASES = {'default': dj_database_url.config(default=DEFAULT_DB)}
-
 # Load the secrets file
 try:
     with open(BASE_PATH.child('.env')) as handle:
@@ -27,6 +17,15 @@ try:
 except IOError:
     import os
     SECRETS = os.environ
+
+ADMINS = (
+    ('Team Xinu', 'xinu@xinu-os.org'),
+)
+
+MANAGERS = ADMINS
+
+# Parse database configuration from $DATABASE_URL (but specify default)
+DATABASES = {'default': dj_database_url.config()}
 
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
