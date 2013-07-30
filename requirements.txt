@@ -11,4 +11,8 @@ selenium==2.33.0
 mock==1.0.1
 django-tracking2==0.1.4
 django-widget-tweaks==1.3
-django-toolbelt==0.0.1
+dj-database-url==0.2.2
+dj-static==0.0.5
+gunicorn==17.5
+
+psycopg2cffi==0.1.6
