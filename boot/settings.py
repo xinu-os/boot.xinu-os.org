@@ -4,6 +4,10 @@ from django.utils import simplejson as json
 import dj_database_url
 from unipath import Path
 
+# Invoke PostgreSQL compat layer
+from psycopg2cffi import compat
+compat.register()
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -19,7 +23,6 @@ MANAGERS = ADMINS
 # Parse database configuration from $DATABASE_URL (but specify default)
 DEFAULT_DB = 'sqlite:///{db}'.format(db=BASE_PATH.child('boot-xinu.db'))
 DATABASES = {'default': dj_database_url.config(default=DEFAULT_DB)}
-
 
 # Load the secrets file
 try:
