@@ -1,6 +1,7 @@
 # Django settings for boot project.
 from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS
 from django.utils import simplejson as json
+import dj_database_url
 from unipath import Path
 
 DEBUG = True
@@ -15,17 +16,10 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'boot-xinu.db',
-        # The following settings are not used with sqlite3:
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',
-        'PORT': '',
-    }
-}
+# Parse database configuration from $DATABASE_URL (but specify default)
+DEFAULT_DB = 'sqlite:///{db}'.format(db=BASE_PATH.child('boot-xinu.db'))
+DATABASES = {'default': dj_database_url.config(default=DEFAULT_DB)}
+
 
 # Load the secrets file
 try:
@@ -34,9 +28,12 @@ try:
 except IOError:
     SECRETS = {}
 
+# Honor the 'X-Forwarded-Proto' header for request.is_secure()
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ['boot.xinu-os.org']
+ALLOWED_HOSTS = ['*']
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
