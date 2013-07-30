@@ -4,10 +4,6 @@ from django.utils import simplejson as json
 import dj_database_url
 from unipath import Path
 
-# Invoke PostgreSQL compat layer
-from psycopg2cffi import compat
-compat.register()
-
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
