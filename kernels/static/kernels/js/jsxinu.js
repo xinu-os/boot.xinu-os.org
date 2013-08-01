@@ -14,6 +14,11 @@ function term_start() {
 /* connect terminal to serial port */
 function term_handler(str) {
     pc.serial.send_chars(str);
+
+    /* HACK: these calls are a workaround to fix keyboard input; further
+     * research is needed and a less cargo-culty fix is in order */
+    pc.serial.set_irq_func(0);
+    pc.serial.set_irq_func(1);
 }
 
 /* no clipboard support ... yet */
