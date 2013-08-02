@@ -25,7 +25,8 @@ ADMINS = (
 MANAGERS = ADMINS
 
 # Parse database configuration from $DATABASE_URL (but specify default)
-DATABASES = {'default': dj_database_url.config()}
+DB_DEFAULT = 'sqlite:///'+BASE_PATH.child('boot-xinu.db')
+DATABASES = {'default': dj_database_url.config(default=DB_DEFAULT)}
 
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
