@@ -1,21 +1,26 @@
 language: python
 python:
-  - "2.7"
-# PyPy 1.9.0 on Travis is too old.
-# https://github.com/travis-ci/travis-ci/issues/1106
-#  - "pypy"
+- '2.7'
 install:
-  - "pip install -r requirements.txt --use-mirrors"
-  - "pip install coveralls --use-mirrors"
+- pip install -r requirements.txt --use-mirrors
+- pip install coveralls --use-mirrors
 env:
+  matrix:
   - DB="sqlite" DATABASE_URL="sqlite://:memory:"
   - DB="pgsql"  DATABASE_URL="postgres://postgres@127.0.0.1/test_djangodb"
   - DB="mysql"  DATABASE_URL="mysql://travis@127.0.0.1/test_djangodb"
 before_script:
-  - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE DATABASE test_djangodb;' -U postgres; fi"
-  - sh -c "if [ '$DB' = 'mysql' ]; then pip install MySQL-python ; fi"
-  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE test_djangodb;' ; fi"
+- sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE DATABASE test_djangodb;' -U postgres; fi"
+- sh -c "if [ '$DB' = 'mysql' ]; then pip install MySQL-python ; fi"
+- sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE test_djangodb;' ; fi"
 script:
-  - "coverage run manage.py test"
+- coverage run manage.py test
 after_success:
-  - "coveralls"
+- coveralls
+deploy:
+  provider: heroku
+  api_key:
+    secure: BSRhUG0ztHDYe6Sq8hDX1tQ31gbAAXr7fw0CBJ8MCWZ515ZxxyyqhJhFH/H0S9+nHmZFLngJH3aFWvhNFF1HG6mwUOJhkmKYle/cDl1x/zAgxuyxOkmE/w4dgVtziUGiWM9MXAPidfmZnp8HFqt/cLEfFFjE61C1mazM9Ysof4Y=
+  app: boot-xinu-os-org
+  on:
+    repo: xinu-os/boot.xinu-os.org
