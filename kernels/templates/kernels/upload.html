@@ -1,12 +1,19 @@
 {% extends "base.html" %}
+{% load url from future %}
 {% load widget_tweaks %}
 
 {% block content %}
 <h1>Upload a Kernel</h1>
 <hr/>
-<form method="post" enctype="multipart/form-data" class="form-horizontal">
+<p>Kernels images are treated as a series with this page starting the
+series. Each kernel in a series will inherit the access level of the
+previous kernel.</p>
+
+<form id="upload-form" method="post" enctype="multipart/form-data" class="form-horizontal">
+    {{ form.errors }}
     {% csrf_token %}
     {{ form.owner.as_hidden }}
+    {{ form.parent.as_hidden }}
     <div class="form-group">
         {% with form.access_level as field %}
         <label for="id_{{ field.html_name }}" class="col-lg-2 control-label">{{ field.label }}</label>
@@ -17,12 +24,54 @@
     </div>
     <div class="form-group">
         {% with form.image as field %}
-        <label for="id_{{ field.html_name }}" class="col-lg-2 control-label">{{ field.label }}</label>
+        <label for="id_image" class="col-lg-2 control-label">Kernel Image</label>
         <div class="col-lg-10">
-            {{ field|add_class:"form-control" }}
+            <input type="file" class="form-control" id="id_image">
+            {{ form.image_path.as_hidden }}
+            <div id="upload-status">Please select a file</div>
         </div>
         {% endwith %}
     </div>
     <button class="btn btn-default pull-right" type="submit" name="submit">Upload</button>
 </form>
+
 {% endblock content %}
+
+{% block extra_body %}
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/lodash.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/s3upload.js"></script>
+
+<script type="text/javascript">
+function image_upload(){
+    var s3upload = new S3Upload({
+        file_dom_selector: '#id_image',
+        s3_sign_put_url: '{% url "json:s3-signer" %}',
+        onProgress: function(percent, message) {
+            $('#upload-status').html('Upload progress: ' + percent + '%' + message);
+        },
+        onFinishS3Put: function(public_url) { 
+            $('#upload-status').html('Upload completed. Uploaded to: '+ public_url);
+            $("#id_image_path").val(public_url);
+            post_kernel();
+        },
+        onError: function(status) {
+            $('#upload-status').html('Upload error: ' + status);
+        }
+    });
+}
+
+function post_kernel() {
+    $.ajax({
+        type: "POST",
+        url: "{% url "kernels:upload" %}",
+        data: $("#upload-form").serialize(),
+        success: function(data, textStatus, jqXHR) {
+            window.location.replace(data["redirect"]);
+        }
+    });
+}
+
+$('#id_image').change(image_upload);
+</script>
+{% endblock extra_body %}

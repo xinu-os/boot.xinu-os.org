@@ -1,16 +1,6 @@
-from hashlib import sha1
-from unipath import Path
-
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
-
-
-def get_image_path(instance, filename):
-    # Place image in sub-dir based on first 2 chars of checksum
-    ck = instance.checksum[0:2]
-    target = '{0}.bin'.format(instance.checksum)
-    return Path(Kernel.IMAGE_PATH).child(ck).child(target)
 
 
 class Kernel(models.Model):
@@ -27,20 +17,16 @@ class Kernel(models.Model):
     )
 
     checksum = models.CharField(max_length=40, primary_key=True)
+    parent = models.ForeignKey('self', null=True, blank=True)
     owner = models.ForeignKey(User)
     timestamp = models.DateTimeField(auto_now=True)
-    image = models.FileField("Kernel Image", upload_to=get_image_path)
+    image_path = models.URLField("Kernel Image Source")
     access_level = models.SmallIntegerField(choices=ACCESS_LEVELS, default=0)
 
     def save(self, *args, **kwargs):
-        checksum = sha1(self.owner.username)
-        checksum.update(self.image.read())
-        self.checksum = checksum.hexdigest()
+        last = self.image_path.split('/')[-1]
+        self.checksum, _ = last.split('.')
         return super(Kernel, self).save(*args, **kwargs)
-
-    def delete(self, *args, **kwargs):
-        self.image.delete(False)
-        return super(Kernel, self).delete(*args, **kwargs)
 
     def __unicode__(self):
         return 'Kernel({0}, {1}, {2})'.format(self.owner,

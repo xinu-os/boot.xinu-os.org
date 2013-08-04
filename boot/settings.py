@@ -1,9 +1,13 @@
 # Django settings for boot project.
+import os
+
 from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS
+
 import dj_database_url
+
 from unipath import Path
 
-DEBUG = False
+DEBUG = os.environ.get('DJ_DEBUG', False)
 TEMPLATE_DEBUG = DEBUG
 
 # Get the base path of the projects
@@ -15,7 +19,6 @@ try:
         env = handle.read()
         SECRETS = dict(var.split('=', 1) for var in env.split())
 except IOError:
-    import os
     SECRETS = os.environ
 
 ADMINS = (
@@ -192,6 +195,11 @@ GOOGLE_OAUTH2_CLIENT_SECRET = SECRETS.get('google_oauth2_client_secret')
 TRACK_AJAX_REQUESTS = True
 TRACK_ANONYMOUS_USERS = True
 TRACK_PAGEVIEWS = True
+
+# Amazon AWS credentials
+AWS_ACCESS_KEY_ID = SECRETS.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = SECRETS.get('AWS_SECRET_ACCESS_KEY')
+S3_BUCKET_NAME = SECRETS.get('S3_BUCKET_NAME')
 
 # Test settings
 TEST_RUNNER = 'discover_runner.DiscoverRunner'

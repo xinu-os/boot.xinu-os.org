@@ -19,6 +19,7 @@ urlpatterns = patterns('',
 
     url(r'^accounts/', include('accounts.urls', namespace='accounts')),
     url(r'^kernels/', include('kernels.urls', namespace='kernels')),
+    url(r'^json/', include('shared.urls', namespace='json')),
 
     url(r'^$', TemplateView.as_view(template_name='index.html'),
         name='index'),

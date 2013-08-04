@@ -2,21 +2,15 @@ import logging
 logging.disable(logging.WARNING)
 
 import httplib
-import tempfile
-import shutil
-import os.path
 
-from django.conf import settings
 from django.contrib.auth.models import User
-from django.core.files.base import ContentFile
 from django.core.urlresolvers import reverse
 from django.test import TestCase
-from django.test.utils import override_settings
+from django.utils import simplejson as json
 
 from kernels.models import Kernel
 
 
-@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
 class KernelsUploadTest(TestCase):
     def setUp(self):
         self.url = reverse('kernels:upload')
@@ -31,36 +25,48 @@ class KernelsUploadTest(TestCase):
                                               self.password2)
         self.user2.plaintext = self.password2
 
-    def tearDown(self):
-        shutil.rmtree(settings.MEDIA_ROOT, ignore_errors=True)
-
     def _login_user(self, user):
         login = self.client.login(username=user.username,
                                   password=user.plaintext)
         return login
 
-    def _submit_upload(self, user):
-        content = 'DATA'
-        f = ContentFile(content, 'content_file')
+    def _submit_upload(self, user, **kwargs):
+        hash_ = '93c795e321598d6d61403cb62ab30b8a1660bbc8'
+        path = '{0}/{1}.bin'.format(hash_[0:2], hash_)
         response = self.client.post(self.url, {
             'owner': user.pk,
-            'image': f,
+            'image_path': 'https://example.org/{0}'.format(path),
             'access_level': Kernel.ACCESS_LEVELS[0][0],
-        })
-        return response, content
+        }, **kwargs)
+        return response
 
     def test_upload(self):
         self.assertTrue(self._login_user(self.user1))
-        response, contents = self._submit_upload(self.user1)
+        response = self._submit_upload(self.user1)
         self.kernels = Kernel.objects.all()
         self.assertEqual(self.kernels.count(), 1)
         kernel = self.kernels[0]
-        self.assertEqual(contents, kernel.image.read())
         self.assertRedirects(response, reverse('kernels:view',
                                                kwargs={'pk': kernel.pk}))
 
+    def test_upload_ajax(self):
+        self.assertTrue(self._login_user(self.user1))
+        response = self._submit_upload(
+            self.user1,
+            follow=True,
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.kernels = Kernel.objects.all()
+        self.assertEqual(self.kernels.count(), 1)
+        kernel = self.kernels[0]
+        url = reverse('kernels:view', kwargs={'pk': kernel.pk})
+        self.assertRedirects(response, url)
+        response = json.loads(response.content)
+        redirect = response['redirect']
+        self.assertEqual(redirect, url)
+
     def test_upload_no_login(self):
-        response, contents = self._submit_upload(self.user1)
+        response = self._submit_upload(self.user1)
         self.kernels = Kernel.objects.all()
         self.assertEqual(self.kernels.count(), 0)
         login_url = reverse('accounts:login')
@@ -72,14 +78,13 @@ class KernelsUploadTest(TestCase):
         # Login as user1
         self.assertTrue(self._login_user(self.user1))
         # Claim that the upload came from user2
-        response, contents = self._submit_upload(self.user2)
+        response = self._submit_upload(self.user2)
         self.kernels = Kernel.objects.all()
         self.assertEqual(self.kernels.count(), 0)
         # user doesn't match owner, forbidden
         self.assertEqual(response.status_code, httplib.FORBIDDEN)
 
 
-@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
 class KernelsDeleteViewTest(TestCase):
 
     def setUp(self):
@@ -91,8 +96,12 @@ class KernelsDeleteViewTest(TestCase):
         self.user2 = User.objects.create_user('test2',
                                               'a@example.com',
                                               self.password)
-        f = ContentFile('kwyjibo', 'content_file')
-        self.kernel = Kernel.objects.create(owner=self.user1, image=f,
+        self.image_hash = '93c795e321598d6d61403cb62ab30b8a1660bbc8'
+        self.image_path = 'https://example.org/{0}/{1}.bin'
+        self.image_path = self.image_path.format(self.image_hash[0:2],
+                                                 self.image_hash)
+        self.kernel = Kernel.objects.create(owner=self.user1,
+                                            image_path=self.image_path,
                                             access_level=Kernel.ACCESS_PUBLIC)
         self.url = reverse('kernels:delete', kwargs={'pk': self.kernel.pk})
 
@@ -121,30 +130,23 @@ class KernelsDeleteViewTest(TestCase):
     def test_delete_kernel_own(self):
         # Make sure user can delete their own kernel
         self._login(self.user1)
-        path = self.kernel.image.path
         pk = self.kernel.owner.pk
         response = self.client.post(self.url, {}, follow=True)
         self.assertRedirects(response, reverse('accounts:user-profile',
                                                kwargs={'pk': pk}))
-        self.assertFalse(os.path.exists(path))
 
     def test_delete_kernel_other(self):
         # Forbidden
         self._login(self.user2)
-        path = self.kernel.image.path
         response = self.client.post(self.url, {})
         self.assertEqual(response.status_code, httplib.FORBIDDEN)
-        self.assertTrue(os.path.exists(path))
 
     def test_delete_kernel_anon(self):
         # Forbidden
-        path = self.kernel.image.path
         response = self.client.post(self.url, {})
         self.assertEqual(response.status_code, httplib.FORBIDDEN)
-        self.assertTrue(os.path.exists(path))
 
 
-@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
 class KernelsDetailViewTest(TestCase):
 
     def setUp(self):
@@ -157,12 +159,13 @@ class KernelsDetailViewTest(TestCase):
         self.kernel1 = self._create_kernel(Kernel.ACCESS_LINK)
         self.kernel2 = self._create_kernel(Kernel.ACCESS_PRIVATE)
 
-    def tearDown(self):
-        shutil.rmtree(settings.MEDIA_ROOT)
-
     def _create_kernel(self, access_level):
-        f = ContentFile(Kernel.ACCESS_LEVELS[access_level][1], 'content_file')
-        kernel = Kernel.objects.create(owner=self.user1, image=f,
+        end = Kernel.ACCESS_LEVELS[access_level][0]
+        image_hash = '93c795e321598d6d61403cb62ab30b8a1660bbc{0}'.format(end)
+        image_path = 'https://example.org/{0}/{1}.bin'
+        image_path = image_path.format(image_hash[0:2], image_hash)
+        kernel = Kernel.objects.create(owner=self.user1,
+                                       image_path=image_path,
                                        access_level=access_level)
         return kernel
 
@@ -181,8 +184,10 @@ class KernelsDetailViewTest(TestCase):
         # KernelsImageView
         url = self._get_image_url(kernel.pk)
         response = self.client.get(url, HTTP_REFERER=url)
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, kernel.image.read())
+        location = response._headers['location']
+        redirect = location[1]
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(redirect, kernel.image_path)
 
     def _assertNonViewable(self, url):
         response = self.client.get(url)

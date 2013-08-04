@@ -1,6 +1,8 @@
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import HttpResponse
+from django.shortcuts import redirect
+from django.utils import simplejson as json
 from django.views.generic import View, DetailView, CreateView, DeleteView
 
 from shared.views import ProtectedMixin
@@ -24,6 +26,7 @@ class KernelsUploadView(ProtectedMixin, CreateView):
     def get_form_kwargs(self):
         kwargs = super(KernelsUploadView, self).get_form_kwargs()
         kwargs.update({'owner': self.request.user})
+        kwargs.update({'parent': None})
         return kwargs
 
     def get_success_url(self):
@@ -44,12 +47,16 @@ class KernelsView(DetailView, KernelProtectedMixin):
     def dispatch(self, request, *args, **kwargs):
         if self.is_private(self.get_object()):
             raise PermissionDenied
+        # Ajax response just needs to tell the JS client to redirect
+        if request.is_ajax():
+            response = {'redirect': request.path_info}
+            return HttpResponse(json.dumps(response),
+                                content_type='application/json')
         return super(KernelsView, self).dispatch(request, *args, **kwargs)
 
 
 class KernelsImageView(View, KernelProtectedMixin):
     http_method_names = ['get']
-    content_type = 'application/octet-stream'
 
     def get(self, request, *args, **kwargs):
         pk = kwargs['pk']
@@ -60,7 +67,7 @@ class KernelsImageView(View, KernelProtectedMixin):
         hotlinking = view_url not in referrer
         if self.is_private(kernel) or hotlinking:
             raise PermissionDenied
-        return HttpResponse(kernel.image, content_type=self.content_type)
+        return redirect(kernel.image_path)
 
 
 class KernelsDeleteView(DeleteView):
