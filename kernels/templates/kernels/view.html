@@ -37,7 +37,6 @@
     </div>
 </div>
 <div class="clearfix"></div>
-
 <hr/>
 <div class="row">
     <dl class="dl-horizontal col-lg-8">
@@ -46,7 +45,7 @@
         <dt>Upload Date</dt>
         <dd>{{ object.timestamp }}</dd>
         <dt>Owner</dt>
-        <dd>{{ object.owner }}</dd>
+        <dd>{{ object.owner.profile.name }}</dd>
     </dl>
     <form method="get" action="{% url "kernels:delete" pk=object.pk %}" class="col-lg-4">
         <button class="btn btn-default pull-right" type="submit" name="delete">Delete this Kernel</button>
