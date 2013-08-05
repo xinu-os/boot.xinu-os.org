@@ -16,7 +16,7 @@ class Kernel(models.Model):
         (ACCESS_PRIVATE, _('Private')),
     )
 
-    checksum = models.CharField(max_length=40, primary_key=True)
+    checksum = models.CharField(max_length=255, primary_key=True)
     parent = models.ForeignKey('self', null=True, blank=True)
     owner = models.ForeignKey(User)
     timestamp = models.DateTimeField(auto_now=True)
