@@ -19,7 +19,7 @@ class KernelsUserKernelsTagTestCase(TestCase):
 
     def _create_kernel(self, user, access_level):
         end = Kernel.ACCESS_LEVELS[access_level][0]
-        image_hash = '93c795e321598d6d61403cb62ab30b8a1660bb{1}{0}'
+        image_hash = '93c795e321598d6d61403cb62ab30b8a1660bb{0}{1}'
         image_hash = image_hash.format(user.id, end)
         image_path = 'https://example.org/{0}/{1}.bin'
         image_path = image_path.format(image_hash[0:2], image_hash)
