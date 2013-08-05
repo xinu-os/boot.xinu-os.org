@@ -24,3 +24,4 @@ deploy:
   app: boot-xinu-os-org
   on:
     repo: xinu-os/boot.xinu-os.org
+  run: "python manage.py syncdb --migrate -v3"
