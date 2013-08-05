@@ -24,4 +24,5 @@ deploy:
   app: boot-xinu-os-org
   on:
     repo: xinu-os/boot.xinu-os.org
+    condition: "$DB == pgsql"
   run: "python manage.py syncdb --migrate -v3"
