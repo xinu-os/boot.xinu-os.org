@@ -44,11 +44,11 @@ class S3SignerTestCase(TestCase):
         self.assertIn(str(my_expires), request)
         self.assertIn(self.S3_BUCKET_NAME, request)
 
-    @patch('shared.views.time')
+    @patch('shared.views.random')
     @patch('shared.views.settings')
-    def test_get_hash(self, mock_conf, mock_time):
+    def test_get_hash(self, mock_conf, mock_random):
         mock_conf.AWS_SECRET_ACCESS_KEY = self.AWS_SECRET_ACCESS_KEY
-        mock_time.return_value = 0
+        mock_random.return_value = 0
         user = Mock(username='dummy')
         hash_ = self.signer.get_hash(user)
         # Definately don't want name in new name

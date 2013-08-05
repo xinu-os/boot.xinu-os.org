@@ -3,8 +3,9 @@ import hashlib
 import hmac
 import urllib
 
-from time import time
 from os.path import join
+from random import random
+from time import time
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -66,7 +67,7 @@ class S3SignerView(View):
 
     def get_hash(self, user):
         h = hashlib.sha1(user.username)
-        h.update(str(time()))
+        h.update(str(random()))
         h.update(settings.AWS_SECRET_ACCESS_KEY)
         return h.hexdigest()
 

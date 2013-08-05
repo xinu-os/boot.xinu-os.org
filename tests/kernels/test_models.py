@@ -1,3 +1,5 @@
+from mock import patch
+
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.test import TestCase
@@ -38,7 +40,9 @@ class KernelsModelTestCase(TestCase):
         self.client.logout()
         return response
 
-    def test_upload_same_image_two_users(self):
+    @patch('shared.views.settings')
+    def test_upload_same_image_two_users(self, mock_conf):
+        mock_conf.AWS_SECRET_ACCESS_KEY = 'A'*20
         # Upload kernel once
         self._submit_upload(self.user1)
         self.kernels = Kernel.objects.all()
