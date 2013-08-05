@@ -1,6 +1,7 @@
 {% load url from future %}
 <h1>
     {{ header }}
+    {% if user == object %}<small><a href="{% url "kernels:upload" %}">Upload a Kernel</a></small>{% endif %}
 </h1>
 <hr/>
 <table class="table table-condensed table-hover">
