@@ -28,7 +28,10 @@ previous kernel.</p>
         <div class="col-lg-10">
             <input type="file" class="form-control" id="id_image">
             {{ form.image_path.as_hidden }}
-            <div id="upload-status">Please select a file</div>
+            <div class="progress">
+                <div class="progress-bar progress-bar-info" style="width:0%">
+                </div>
+            </div>
         </div>
         {% endwith %}
     </div>
@@ -38,7 +41,6 @@ previous kernel.</p>
 {% endblock content %}
 
 {% block extra_body %}
-<script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/lodash.min.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/s3upload.js"></script>
 
@@ -48,15 +50,17 @@ function image_upload(){
         file_dom_selector: '#id_image',
         s3_sign_put_url: '{% url "json:s3-signer" %}',
         onProgress: function(percent, message) {
-            $('#upload-status').html('Upload progress: ' + percent + '%' + message);
+            $('.progress-bar').css('width', percent + '%');
         },
         onFinishS3Put: function(public_url) { 
-            $('#upload-status').html('Upload completed. Uploaded to: '+ public_url);
+            $('.progress-bar').css('width', '100%');
             $("#id_image_path").val(public_url);
             post_kernel();
         },
         onError: function(status) {
-            $('#upload-status').html('Upload error: ' + status);
+            $('.progress-bar')
+                .removeClass('progress-bar-info')
+                .addClass('progress-bar-danger');
         }
     });
 }
