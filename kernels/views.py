@@ -1,9 +1,8 @@
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import HttpResponse
-from django.shortcuts import redirect
 from django.utils import simplejson as json
-from django.views.generic import View, DetailView, CreateView, DeleteView
+from django.views.generic import DetailView, CreateView, DeleteView
 
 from shared.views import ProtectedMixin
 from kernels.models import Kernel
@@ -53,21 +52,6 @@ class KernelsView(DetailView, KernelProtectedMixin):
             return HttpResponse(json.dumps(response),
                                 content_type='application/json')
         return super(KernelsView, self).dispatch(request, *args, **kwargs)
-
-
-class KernelsImageView(View, KernelProtectedMixin):
-    http_method_names = ['get']
-
-    def get(self, request, *args, **kwargs):
-        pk = kwargs['pk']
-        kernel = Kernel.objects.get(pk=pk)
-        referrer = request.META.get('HTTP_REFERER', [])
-        view_url = reverse('kernels:view', kwargs={'pk': pk})
-        # Permission Denied for hotlinkers and private kernels
-        hotlinking = view_url not in referrer
-        if self.is_private(kernel) or hotlinking:
-            raise PermissionDenied
-        return redirect(kernel.image_path)
 
 
 class KernelsDeleteView(DeleteView):

@@ -28,7 +28,7 @@
         <script type="text/javascript">
             $(document).ready(function() {
                 // create the VM and load the PC
-                var kernel = "{% url "kernels:image" object.pk %}";
+                var kernel = "{{ object.image_path }}";
                 var kernel_mem = 16 * 1024 * 1024;
                 console.log("Starting", kernel, "with", kernel_mem, "bytes");
                 load_pc(kernel, kernel_mem);

@@ -158,6 +158,8 @@ class KernelsDetailViewTest(TestCase):
         self.kernel0 = self._create_kernel(Kernel.ACCESS_PUBLIC)
         self.kernel1 = self._create_kernel(Kernel.ACCESS_LINK)
         self.kernel2 = self._create_kernel(Kernel.ACCESS_PRIVATE)
+        # Make sure we have 3 kernels
+        self.assertEqual(Kernel.objects.count(), 3)
 
     def _create_kernel(self, access_level):
         end = Kernel.ACCESS_LEVELS[access_level][0]
@@ -172,22 +174,12 @@ class KernelsDetailViewTest(TestCase):
     def _get_detail_url(self, pk):
         return reverse('kernels:view', kwargs={'pk': pk})
 
-    def _get_image_url(self, pk):
-        return reverse('kernels:image', kwargs={'pk': pk})
-
     def _assertViewable(self, kernel):
         # KernelsDetailView
-        url = self._get_detail_url(kernel.pk)
-        response = self.client.get(url)
+        detail_url = self._get_detail_url(kernel.pk)
+        response = self.client.get(detail_url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'kernels/view.html')
-        # KernelsImageView
-        url = self._get_image_url(kernel.pk)
-        response = self.client.get(url, HTTP_REFERER=url)
-        location = response._headers['location']
-        redirect = location[1]
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(redirect, kernel.image_path)
 
     def _assertNonViewable(self, url):
         response = self.client.get(url)
@@ -210,4 +202,3 @@ class KernelsDetailViewTest(TestCase):
 
     def test_private_view_non_owner(self):
         self._assertNonViewable(self._get_detail_url(self.kernel2.pk))
-        self._assertNonViewable(self._get_image_url(self.kernel2.pk))
