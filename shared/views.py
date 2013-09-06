@@ -79,6 +79,9 @@ class S3SignerView(View):
         hash_ = self.get_hash(self.request.user)
         self.object_name = self.get_object_name(hash_)
         self.mime_type = self.request.GET.get('s3_object_type')
+        # Protect against weird mime types
+        if '/' not in self.mime_type:
+            self.mime_type = ''
 
         expires = int(time() + 300)
         url = 'https://{bucket}.s3.amazonaws.com/{object_name}'
