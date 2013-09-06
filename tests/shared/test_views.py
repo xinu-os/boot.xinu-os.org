@@ -98,7 +98,7 @@ class S3SignerTestCase(TestCase):
     def test_get_s3_request(self, mock_conf, mock_time, mock_hash):
         self.signer.request = Mock(GET={})
         self.signer.request.GET['s3_object_name'] = 'object'
-        self.signer.request.GET['s3_object_type'] = 'type'
+        self.signer.request.GET['s3_object_type'] = 'class/type'
         self.signer.request.user.username = 'dummy'
         mock_time.return_value = 0
         mock_conf.AWS_SECRET_ACCESS_KEY = self.AWS_SECRET_ACCESS_KEY
@@ -109,7 +109,7 @@ class S3SignerTestCase(TestCase):
         url = 'https://johnsmith.s3.amazonaws.com/object'
         expected = {'AWSAccessKeyId': 'AKIAIOSFODNN7EXAMPLE',
                     'Expires': '300',
-                    'Signature': 'soMKF8jwxzo%2FpwBp8KJIytNLVOY%3D'}
+                    'Signature': 'uVp5lXQlyGMfAp7EOuJXa%2F5hp8E%3D'}
         self.assertEqual(request['url'], url)
         self.assertTrue(request['signed_request'].startswith(url))
         for key, value in expected.iteritems():
