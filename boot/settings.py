@@ -7,6 +7,13 @@ import dj_database_url
 
 from unipath import Path
 
+# configure for compat with MySQLdb
+try:
+    import pymysql
+    pymysql.install_as_MySQLdb()
+except ImportError:
+    pass
+
 DEBUG = os.environ.get('DJ_DEBUG', False)
 TEMPLATE_DEBUG = DEBUG
 
