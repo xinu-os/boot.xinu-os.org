@@ -4,9 +4,6 @@ machine:
     - postgresql
 test:
   override:
-    - DATABASE_URL="slite://:memory:"
-    - coverage run manage.py test
-    - DATABASE_URL="mysql://ubuntu:@127.0.0.1/circle_test"
-    - coverage run manage.py test
-    - DATABASE_URL="postgres://ubuntu:@127.0.0.1:5432/circle_test"
-    - coverage run manage.py test
+    - DATABASE_URL="slite://:memory:" coverage run manage.py test
+    - DATABASE_URL="mysql://ubuntu:@127.0.0.1/circle_test" coverage run manage.py test
+    - DATABASE_URL="postgres://ubuntu:@127.0.0.1:5432/circle_test" coverage run manage.py test
