@@ -4,9 +4,6 @@ machine:
     - postgresql
 test:
   override:
-    - case $CIRCLE_NODE_INDEX in \
-        0) DATABASE_URL="sqlite://:memory:" ;; \
-        1) DATABASE_URL="mysql://ubuntu:@127.0.0.1/circle_test" ;; \
-        2) DATABASE_URL="postgres://ubuntu:@127.0.0.1:5432/circle_test" ;; esac:
+    - case $CIRCLE_NODE_INDEX in 0) DATABASE_URL="sqlite://:memory:" ;; 1) DATABASE_URL="mysql://ubuntu:@127.0.0.1/circle_test" ;; 2) DATABASE_URL="postgres://ubuntu:@127.0.0.1:5432/circle_test" ;; esac:
       parallel: true
     - coverage run manage.py test
