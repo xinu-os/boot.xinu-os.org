@@ -5,5 +5,7 @@ services:
 script:
   - pip install -r requirements.txt --use-mirrors
   - DATABASE_URL="sqlite://:memory:" coverage run manage.py test
-  - DATABASE_URL="postgres://postgres@127.0.0.1/test_djangodb" coverage run manage.py test
-  - DATABASE_URL="mysql://travis@127.0.0.1/test_djangodb" coverage run manage.py test
+  - psql -c 'create database test_djangodb;' -U postgres
+  - DATABASE_URL="postgres://postgres@localhost/test_djangodb" coverage run manage.py test
+  - mysql -u root -e 'create database test_djangodb;'
+  - DATABASE_URL="mysql://root@localhost/test_djangodb" coverage run manage.py test
