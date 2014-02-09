@@ -1,0 +1,10 @@
+image: python2.7
+services:
+  - mysql
+  - postgres
+script:
+  - pip install -r requirements.txt --use-mirrors
+  - pip install coveralls --use-mirrors
+  - DATABASE_URL="sqlite://:memory:" coverage run manage.py test
+  - DATABASE_URL="postgres://postgres@127.0.0.1/test_djangodb" coverage run manage.py test
+  - DATABASE_URL="mysql://travis@127.0.0.1/test_djangodb" coverage run manage.py test
