@@ -6,7 +6,7 @@ script:
   - sudo apt-get install socat
   - pip install -r requirements.txt --use-mirrors
   - DATABASE_URL="sqlite://:memory:" coverage run manage.py test
-  - psql -h localhost -c 'create database test_djangodb;' -U postgres
-  - DATABASE_URL="postgres://postgres@localhost/test_djangodb" coverage run manage.py test
-  - mysql -h localhost -u root -e 'create database test_djangodb;'
-  - DATABASE_URL="mysql://root@localhost/test_djangodb" coverage run manage.py test
+  - psql -h 127.0.0.1 -c 'create database test_djangodb;' -U postgres
+  - DATABASE_URL="postgres://postgres@127.0.0.1/test_djangodb" coverage run manage.py test
+  - mysql -h 127.0.0.1 -u root -e 'create database test_djangodb;'
+  - DATABASE_URL="mysql://root@127.0.0.1/test_djangodb" coverage run manage.py test
