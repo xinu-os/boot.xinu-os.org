@@ -3,6 +3,7 @@ services:
   - mysql
   - postgres
 script:
+  - sudo apt-get install socat
   - pip install -r requirements.txt --use-mirrors
   - DATABASE_URL="sqlite://:memory:" coverage run manage.py test
   - psql -c 'create database test_djangodb;' -U postgres
